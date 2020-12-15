@@ -1,4 +1,4 @@
-# Cronometro-e-Placar-Seguidor-de-Linha-Robot-Arena-UTFPR
+# Cronometro e placar - Seguidor de Linha - Robot Arena - UTFPR
 Protótipo (desenvolvido em uma semana) em Python usando PyGObject para interface gráfica para cronômetro e placar para a competição Robot Arena (UTFPR - Toledo) para a categoria seguidor de linha.
 
 # O sensor
