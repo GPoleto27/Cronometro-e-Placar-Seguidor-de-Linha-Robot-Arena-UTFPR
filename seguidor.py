@@ -33,6 +33,8 @@ class ButtonWindow(Gtk.Window):
             self, title="Seguidor de Linha - Robot Arena 2020.2")
         self.set_border_width(10)
 
+        self.__time_threshold = 2
+
         self.maing = Gtk.Grid()
         self.maing.set_column_spacing(50)
         self.maing.set_row_spacing(25)
@@ -219,13 +221,16 @@ class ButtonWindow(Gtk.Window):
             if self.ser.in_waiting > 0:
                 self.ser.read()
                 if self.start != 0:
-                    self.tentativa += 1
-                    scoreboard[self.selectedIndex][2] = self.t
-                    if self.t < scoreboard[self.selectedIndex][1]:
-                        scoreboard[self.selectedIndex][1] = self.t
-                        self.updateScoreboard()
-                    self.updateFile()
-                self.start = time.time()
+                    if time.time() - self.start > self.__time_threshold:
+                        self.tentativa += 1
+                        scoreboard[self.selectedIndex][2] = self.t
+                        self.start = time.time()
+                        if self.t < scoreboard[self.selectedIndex][1]:
+                            scoreboard[self.selectedIndex][1] = self.t
+                            self.updateScoreboard()
+                        self.updateFile()
+                else:
+                    self.start = time.time()
             else:
                 if self.start != 0:
                     self.t = round(time.time() - self.start, 4)
@@ -241,13 +246,14 @@ class ButtonWindow(Gtk.Window):
             else:
                 if self.ser.in_waiting > 0:
                     self.ser.read()
-                    self.start = time.time()
-                    self.tentativa += 1
-                    scoreboard[self.selectedIndex][3] = self.t
-                    if self.t < scoreboard[self.selectedIndex][1]:
-                        scoreboard[self.selectedIndex][1] = self.t
-                        self.updateScoreboard()
-                    self.updateFile()
+                    if time.time() - self.start > self.__time_threshold:
+                        self.start = time.time()
+                        self.tentativa += 1
+                        scoreboard[self.selectedIndex][3] = self.t
+                        if self.t < scoreboard[self.selectedIndex][1]:
+                            scoreboard[self.selectedIndex][1] = self.t
+                            self.updateScoreboard()
+                        self.updateFile()
                 else:
                     if self.start != 0:
                         self.t = round(time.time() - self.start, 4)
@@ -263,14 +269,15 @@ class ButtonWindow(Gtk.Window):
             else:
                 if self.ser.in_waiting > 0:
                     self.ser.read()
-                    self.start = 0
-                    scoreboard[self.selectedIndex][4] = self.t
-                    if self.t < scoreboard[self.selectedIndex][1]:
-                        scoreboard[self.selectedIndex][1] = self.t
-                        self.updateScoreboard()
-                    self.updateFile()
-                    GLib.source_remove(self.threadID)
-                    self.threadID = 0
+                    if time.time() - self.start > self.__time_threshold:
+                        self.start = 0
+                        scoreboard[self.selectedIndex][4] = self.t
+                        if self.t < scoreboard[self.selectedIndex][1]:
+                            scoreboard[self.selectedIndex][1] = self.t
+                            self.updateScoreboard()
+                        self.updateFile()
+                        GLib.source_remove(self.threadID)
+                        self.threadID = 0
                 else:
                     if self.start != 0:
                         self.t = round(time.time() - self.start, 4)
